@@ -1,0 +1,11 @@
+{
+  "name": "s3select-cleverorc-5e-creatures",
+  "version": "0.1.0",
+  "description": "5e Creature API",
+  "author": "Daniel Shaefer",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1297.0",
+    "uuid": "^9.0.0"
+  }
+}

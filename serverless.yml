@@ -1,0 +1,39 @@
+service: s3select-cleverorc-5e-creatures
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+      Resource: "arn:aws:s3:::cleverorc/5e/allCreatures5e.json"
+
+functions:
+  s3Select:
+    memorySize: 128
+    handler: src/shaefer/s3Select.allCreatures
+    events:
+      - http:
+          path: shaefer/allCreatures
+          method: get
+          cors: true
+  GetCreatureByName:
+    memorySize: 128
+    handler: src/shaefer/5eCreatures.getCreatureByName
+    events:
+      - http:
+          path: shaefer/{name}
+          method: get
+          cors: true
+  GetCreaturesByCR:
+    memorySize: 128
+    handler: src/shaefer/5eCreatures.getCreatureByCR
+    events:
+      - http:
+          path: shaefer/{crRange}
+          method: get
+          cors: true

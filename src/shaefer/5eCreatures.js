@@ -12,7 +12,7 @@ module.exports.getCreatureByName = async (event, context, callback) => {
 };
 
 module.exports.getCreatureByCR = async (event, context, callback) => {
-  const crRangeParam = event.pathParameters.crRange;
+  const crRangeParam = event.pathParameters.cr;
   //3-6
   //4
   //>5 >=5
@@ -22,8 +22,26 @@ module.exports.getCreatureByCR = async (event, context, callback) => {
   //contains <
   //just digits
   const parseRangeToWhereClause = (crRange) => {
-    return "WHERE s.CR = 5";
+    //add a general match to ensure the input actually conforms to all our expectations. You could currently have a > and no digit after and it would break.
+    if (crRange.includes(">") || crRange.includes("<")) {
+      const regexParse = new RegExp(/([><]=?)(\d+)/).exec(crRange);
+      const operator = regexParse[1];
+      const crBase = regexParse[2];
+      return `WHERE s.CR ${operator} ${crBase}`;
+    } else {
+      const regexParse = new RegExp(/(\d+)-?(\d+)?/).exec(crRange);
+      if (crRange.includes("-")) {
+        const crStart = parseInt(regexParse[1]);
+        const crEnd = parseInt(regexParse[2]);
+        return `WHERE s.CR >= ${crStart} AND s.CR <= ${crEnd}`;
+      } else {
+        const crExact = parseInt(regexParse[1]);
+        return `WHERE s.CR = ${crExact}`;
+      }
+    }
+    return "WHERE s.CR = 30";
   }
+
   const whereClause = parseRangeToWhereClause(crRangeParam);
   const expression = `SELECT * FROM S3Object s ${whereClause}`;
   try {

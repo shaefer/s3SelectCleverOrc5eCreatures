@@ -39,9 +39,10 @@ module.exports.getCreatureByCR = async (event, context, callback) => {
         return `WHERE s.CR = ${crExact}`;
       }
     }
-    return "WHERE s.CR = 30";
   }
 
+  const isValid = new RegExp(/\d+-\d+|\d+|[<>]=?\d+/).test(crRangeParam);
+  if (!isValid) return context.fail(`Input '${crRangeParam}' does not match expected input e.g. 3-4, >=5, 10`)
   const whereClause = parseRangeToWhereClause(crRangeParam);
   const expression = `SELECT * FROM S3Object s ${whereClause}`;
   try {

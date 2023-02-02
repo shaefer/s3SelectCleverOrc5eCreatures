@@ -9,7 +9,7 @@ Getting started with Lambda isn't hard at all. But if you are shooting for a sup
 - [Follow Serverless setup guide](https://www.serverless.com/framework/docs/providers/aws/guide/installation/) for 3 things:
     1. Install Node
     1. Install Serverless
-    1. Setup AWS - mostly setting up credentials
+    1. Setup AWS - mostly [setting up credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)
 
 If you are looking for a first-time guide to serverless and lambda's please check out [this serverless example project](https://github.com/shaefer/serverless_example) first.
 

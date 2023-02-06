@@ -106,7 +106,7 @@ module.exports.creatureSearch = async (event, context, callback) => {
         //TODO: Implement special handling.
         whereClauses.push(`LOWER(${tableRef}."Size") like LOWER('${fieldValue}')`);
       } else if (field == "Alignment") {
-        whereClauses.push(`LOWER(${tableRef}."Align.") = LOWER('${fieldValue}')`);
+        whereClauses.push(`LOWER(${tableRef}."Alignment") = LOWER('${fieldValue}')`);
       }  
     } else {
       console.log("Found no value for field: " + field);

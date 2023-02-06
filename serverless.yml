@@ -13,7 +13,7 @@ provider:
       Resource: "arn:aws:s3:::cleverorc/5e/allCreatures5e.json"
 
 functions:
-  s3Select:
+  GetAllCreatures:
     memorySize: 128
     handler: src/shaefer/s3Select.allCreatures
     events:
@@ -34,6 +34,22 @@ functions:
     handler: src/shaefer/5eCreatures.getCreatureByCR
     events:
       - http:
-          path: shaefer/{crRange}
+          path: shaefer/cr/{range}
+          method: get
+          cors: true
+  GetCreaturesByAbilityScore:
+    memorySize: 128
+    handler: src/shaefer/5eCreatures.getCreatureByAbilityScore
+    events:
+      - http:
+          path: shaefer/{abilityScore}/{range}
+          method: get
+          cors: true
+  GetCreatures:
+    memorySize: 128
+    handler: src/shaefer/5eCreatures.creatureSearch
+    events:
+      - http:
+          path: shaefer/creatureSearch
           method: get
           cors: true

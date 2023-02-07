@@ -37,3 +37,20 @@ https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lamb
 * There is no `NOT IN` so you have to join your clauses with `something != 'this' AND something != 'that'`
 * Escape single ticks in S3Select with an additional single tick `Daniel's Example` would be escaped like `Daniel''s Example` Don't get confused when you are escaping your base code vs. what the final string needs to look like in the expression.
 * A good resource for Regular Expression (regex) testing - [Regex101](https://regex101.com/)
+* The responses for lambda in proxy mode expect a wrapper for the data that makes it look more like a traditional http response. I wrapped the data returns with the following:
+```javascript
+const http200 = (data) => {
+  const response = {
+    statusCode: '200',
+    body: JSON.stringify(data),
+  };
+  return response;
+}
+const http500 = (error) => {
+  const response = {
+    statusCode: '500',
+    body: error,
+  };
+  return response;
+}
+```

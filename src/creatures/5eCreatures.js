@@ -1,19 +1,23 @@
 const {s3SelectWithExpression} = require('./s3SelectBase');
 
-const wrapData = (data) => {
-  return {results: data, count: data.length};
+const http200 = (data) => {
+  const response = {
+    statusCode: '200',
+    body: JSON.stringify(data),
+  };
+  return response;
+}
+const http500 = (error) => {
+  const response = {
+    statusCode: '500',
+    body: error,
+  };
+  return response;
 }
 
-module.exports.getCreatureByName = async (event, context, callback) => {
-  const name = event.pathParameters.name;
-  const expression = `SELECT * FROM S3Object s WHERE s.Name = '`+name+`'`;
-  try {
-    const data = await s3SelectWithExpression(expression);
-    context.succeed(wrapData(data))
-  } catch (error) {
-    context.fail(error)
-  }
-};
+const wrapData = (data) => {
+  return http200({count: data.length, results: data});
+}
 
 const parseRangeToWhereClause = (numRange, tableRef, field) => {
   //add a general match to ensure the input actually conforms to all our expectations. You could currently have a > and no digit after and it would break.
@@ -35,38 +39,60 @@ const parseRangeToWhereClause = (numRange, tableRef, field) => {
   }
 }
 
-module.exports.getCreatureByCR = async (event, context, callback) => {
-  const rangeParam = event.pathParameters.cr;
+module.exports.getCreatureByName = async (event, context, callback) => {
+  const name = event.pathParameters.name;
+  const expression = `SELECT * FROM S3Object s WHERE s.Name = '`+name+`'`;
+  try {
+    const data = await s3SelectWithExpression(expression);
+    context.succeed(wrapData(data))
+  } catch (error) {
+    context.fail(http500(error))
+  }
+};
 
+const allSources = ["Monster Manual", "Volo's Guide to Monsters", "Mordenkainen's Tome of Foes", "Tomb of Annihilation", "Tales from the Yawning Portal", "Curse of Strahd", "Out of the Abyss", "Storm King's Thunder", "Xanathar's Guide to Everything", "Rise of Tiamat", "Princes of the Apocalypse", "Hoard of the Dragon Queen", "The Tortle Package", "Dungeon Master's Guide"];
+module.exports.allCreatures = async (event, context, callback) => {
+  const expression = `SELECT * FROM S3Object s`;
+  try {
+    const data = await s3SelectWithExpression(expression);
+    context.succeed(wrapData(data))
+  } catch (error) {
+    context.fail(http500(error))
+  }
+};
+
+module.exports.getCreatureByCR = async (event, context, callback) => {
+  const rangeParam = event.pathParameters.range;
   const isValid = new RegExp(/\d+-\d+|\d+|[<>]=?\d+/).test(rangeParam);
   if (!isValid) return context.fail(`Input '${rangeParam}' does not match expected input e.g. 3-4, >=5, 10`)
 
   const tableRef = "s";
   const whereClause = parseRangeToWhereClause(rangeParam, tableRef, "CR");
-  const expression = `SELECT * FROM S3Object ${tableRef} ${whereClause}`;
-  try {
-    const data = await s3SelectWithExpression(expression);
-    context.succeed(wrapData(data))
-  } catch (error) {
-    context.fail(error)
-  }
-};
-
-module.exports.getCreatureByAbilityScore = async (event, context, callback) => {
-  console.log(event)
-  const rangeParam = event.pathParameters.str;
-
-  const isValid = new RegExp(/\d+-\d+|\d+|[<>]=?\d+/).test(rangeParam);
-  if (!isValid) return context.fail(`Input '${rangeParam}' does not match expected input e.g. 3-4, >=5, 10`)
-
-  const tableRef = "s";
-  const whereClause = parseRangeToWhereClause(rangeParam, tableRef, "STR");
   const expression = `SELECT * FROM S3Object ${tableRef} WHERE ${whereClause}`;
   try {
     const data = await s3SelectWithExpression(expression);
     context.succeed(wrapData(data))
   } catch (error) {
-    context.fail(error)
+    context.fail(http500(error))
+  }
+};
+
+module.exports.getCreatureByAbilityScore = async (event, context, callback) => {
+  console.log(event)
+  const abilityScore = event.pathParameters.abilityScore;
+  const rangeParam = event.pathParameters.range;
+
+  const isValid = new RegExp(/\d+-\d+|\d+|[<>]=?\d+/).test(rangeParam);
+  if (!isValid) return context.fail(http500(`Input '${rangeParam}' does not match expected input e.g. 3-4, >=5, 10`))
+
+  const tableRef = "s";
+  const whereClause = parseRangeToWhereClause(rangeParam, tableRef, abilityScore.toUpperCase());
+  const expression = `SELECT * FROM S3Object ${tableRef} WHERE ${whereClause}`;
+  try {
+    const data = await s3SelectWithExpression(expression);
+    context.succeed(wrapData(data))
+  } catch (error) {
+    context.fail(http500(error))
   }
 };
 
@@ -85,7 +111,7 @@ const getParameterCaseInsensitive = (object, key) => {
 module.exports.creatureSearch = async (event, context, callback) => {
   console.log(event)
   const searchFields = event.queryStringParameters;
-
+  
   const searchableFields = ["STR", "DEX", "CON", "INT", "WIS", "CHA", "Size", "Alignment", "CR", "Source"];
   const rangeFields = ["STR", "DEX", "CON", "INT", "WIS", "CHA", "CR"];
   const tableRef = "s";
@@ -120,6 +146,6 @@ module.exports.creatureSearch = async (event, context, callback) => {
     const data = await s3SelectWithExpression(expression);
     context.succeed(wrapData(data))
   } catch (error) {
-    context.fail(error)
+    context.fail(http500(error))
   }
 };

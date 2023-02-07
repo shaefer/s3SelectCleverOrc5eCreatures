@@ -15,41 +15,41 @@ provider:
 functions:
   GetAllCreatures:
     memorySize: 128
-    handler: src/shaefer/s3Select.allCreatures
+    handler: src/creatures/5eCreatures.allCreatures
     events:
       - http:
-          path: shaefer/allCreatures
+          path: creatures/allCreatures
           method: get
           cors: true
   GetCreatureByName:
     memorySize: 128
-    handler: src/shaefer/5eCreatures.getCreatureByName
+    handler: src/creatures/5eCreatures.getCreatureByName
     events:
       - http:
-          path: shaefer/{name}
+          path: creatures/creature/{name}
           method: get
           cors: true
   GetCreaturesByCR:
     memorySize: 128
-    handler: src/shaefer/5eCreatures.getCreatureByCR
+    handler: src/creatures/5eCreatures.getCreatureByCR
     events:
       - http:
-          path: shaefer/cr/{range}
+          path: creatures/cr/{range}
           method: get
           cors: true
   GetCreaturesByAbilityScore:
     memorySize: 128
-    handler: src/shaefer/5eCreatures.getCreatureByAbilityScore
+    handler: src/creatures/5eCreatures.getCreatureByAbilityScore
     events:
       - http:
-          path: shaefer/{abilityScore}/{range}
+          path: creatures/abilityScore/{abilityScore}/{range}
           method: get
           cors: true
   GetCreatures:
     memorySize: 128
-    handler: src/shaefer/5eCreatures.creatureSearch
+    handler: src/creatures/5eCreatures.creatureSearch
     events:
       - http:
-          path: shaefer/creatureSearch
+          path: creatures/creatureSearch
           method: get
           cors: true

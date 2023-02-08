@@ -21,19 +21,25 @@ const wrapData = (data) => {
 
 const parseRangeToWhereClause = (numRange, tableRef, field) => {
   //add a general match to ensure the input actually conforms to all our expectations. You could currently have a > and no digit after and it would break.
+  console.log(`Parsing Range: ${numRange} for field: ${field}`)
   if (numRange.includes(">") || numRange.includes("<")) {
     const regexParse = new RegExp(/([><]=?)(\d+)/).exec(numRange);
     const operator = regexParse[1];
     const base = regexParse[2];
-    return `${tableRef}.${field} ${operator} ${base}`;
+    const whereClauseOutput = `${tableRef}.${field} ${operator} ${base}`;
+    console.log("Greater than or less than comparator where clause: " + whereClauseOutput);
+    return whereClauseOutput;
   } else {
     const regexParse = new RegExp(/(\d+)-?(\d+)?/).exec(numRange);
     if (numRange.includes("-")) {
       const start = parseInt(regexParse[1]);
       const end = parseInt(regexParse[2]);
-      return `${tableRef}.${field} >= ${start} AND ${tableRef}.${field} <= ${end}`;
+      const whereClauseOutput = `${tableRef}.${field} >= ${start} AND ${tableRef}.${field} <= ${end}`;
+      console.log("Range output where clause: " + whereClauseOutput);
+      return whereClauseOutput;
     } else {
-      const numExact = parseInt(regexParse[1]);
+      const numExact = parseInt(numRange); //assumes it is just a number like 27
+      console.log("Parsing as exact match with number: " + numExact);
       return `${tableRef}.${field} = ${numExact}`;
     }
   }
@@ -62,7 +68,7 @@ module.exports.allCreatures = async (event, context, callback) => {
 };
 
 module.exports.getCreatureByCR = async (event, context, callback) => {
-  const rangeParam = event.pathParameters.range;
+  const rangeParam = decodeURI(event.pathParameters.range); //range was not being decoded so > was showing up as %3E
   const isValid = new RegExp(/\d+-\d+|\d+|[<>]=?\d+/).test(rangeParam);
   if (!isValid) return context.fail(`Input '${rangeParam}' does not match expected input e.g. 3-4, >=5, 10`)
 
@@ -80,7 +86,7 @@ module.exports.getCreatureByCR = async (event, context, callback) => {
 module.exports.getCreatureByAbilityScore = async (event, context, callback) => {
   console.log(event)
   const abilityScore = event.pathParameters.abilityScore;
-  const rangeParam = event.pathParameters.range;
+  const rangeParam = decodeURI(event.pathParameters.range); //range was not being decoded so > was showing up as %3E
 
   const isValid = new RegExp(/\d+-\d+|\d+|[<>]=?\d+/).test(rangeParam);
   if (!isValid) return context.fail(http500(`Input '${rangeParam}' does not match expected input e.g. 3-4, >=5, 10`))
@@ -110,7 +116,7 @@ const getParameterCaseInsensitive = (object, key) => {
 //serverless invoke local --function GetCreatures --data '{"queryStringParameters":{"str":"30", "cha": "20-23", "alignment":"CE", "source":"Monster Manual", "Size":"Gargantuan"}}'
 module.exports.creatureSearch = async (event, context, callback) => {
   console.log(event)
-  const searchFields = event.queryStringParameters;
+  const searchFields = event.queryStringParameters; //for whatever reason the queryStringParameters do seem to be decoded whereas the Path params were not.
   
   const searchableFields = ["STR", "DEX", "CON", "INT", "WIS", "CHA", "Size", "Alignment", "CR", "Source"];
   const rangeFields = ["STR", "DEX", "CON", "INT", "WIS", "CHA", "CR"];

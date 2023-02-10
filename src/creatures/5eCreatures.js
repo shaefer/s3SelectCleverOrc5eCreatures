@@ -1,31 +1,5 @@
 const {s3SelectWithExpression} = require('./s3SelectBase');
-
-const http200 = (data) => {
-  const response = {
-    statusCode: '200',
-    body: JSON.stringify(data),
-  };
-  return response;
-}
-const http500 = (error) => {
-  const response = {
-    statusCode: '500',
-    body: error,
-  };
-  return response;
-}
-
-const http400 = (error) => {
-  const response = {
-    statusCode: '400',
-    body: error,
-  };
-  return response;
-}
-
-const wrapData = (data) => {
-  return http200({count: data.length, results: data});
-}
+const {http400, http500, wrapData} = require('./httpBase');
 
 const parseRangeToWhereClause = (numRange, tableRef, field) => {
   //add a general match to ensure the input actually conforms to all our expectations. You could currently have a > and no digit after and it would break.
@@ -197,6 +171,7 @@ module.exports.creatureSearch = async (event, context, callback) => {
     const data = await s3SelectWithExpression(expression);
     context.succeed(wrapData(data))
   } catch (error) {
+    console.log("Error occured", error);
     context.fail(http500(error))
   }
 };

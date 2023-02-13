@@ -15,7 +15,7 @@ provider:
 functions:
   GetAllCreatures:
     memorySize: 128
-    handler: src/creatures/5eCreatures.allCreatures
+    handler: src/creatures/5eCreaturesAPI.allCreatures
     events:
       - http:
           path: creatures/allCreatures
@@ -23,7 +23,7 @@ functions:
           cors: true
   GetCreatureByName:
     memorySize: 128
-    handler: src/creatures/5eCreatures.getCreatureByName
+    handler: src/creatures/5eCreaturesAPI.getCreatureByName
     events:
       - http:
           path: creatures/creature/{name}
@@ -31,7 +31,7 @@ functions:
           cors: true
   GetCreaturesByCR:
     memorySize: 128
-    handler: src/creatures/5eCreatures.getCreatureByCR
+    handler: src/creatures/5eCreaturesAPI.getCreatureByCR
     events:
       - http:
           path: creatures/cr/{range}
@@ -39,7 +39,7 @@ functions:
           cors: true
   GetCreaturesByAbilityScore:
     memorySize: 128
-    handler: src/creatures/5eCreatures.getCreatureByAbilityScore
+    handler: src/creatures/5eCreaturesAPI.getCreatureByAbilityScore
     events:
       - http:
           path: creatures/abilityScore/{abilityScore}/{range}
@@ -47,7 +47,7 @@ functions:
           cors: true
   GetCreatures:
     memorySize: 128
-    handler: src/creatures/5eCreatures.creatureSearch
+    handler: src/creatures/5eCreaturesAPI.creatureSearch
     events:
       - http:
           path: creatures/creatureSearch

@@ -1,0 +1,16 @@
+{
+    "name": "json-updater",
+    "version": "0.0.1",
+    "private": true,
+    "node": "18.13.0",
+    "main": "index.js",
+    "dependencies": {
+      "command-line-args": "^5.2.1",
+      "prompt-sync": "^4.2.0",
+      "n-readlines": "^1.0.1"
+    },
+    "scripts": {
+      "test": "react-scripts test --env=jsdom",
+      "start": "node ./index.js"
+    }
+  }

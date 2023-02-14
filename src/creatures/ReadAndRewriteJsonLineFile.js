@@ -1,6 +1,5 @@
 console.time('Time');
 
-const { kMaxLength } = require('buffer');
 const fs = require('fs');
 const readline = require('readline');
 

@@ -36,6 +36,12 @@ https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lamb
 ## S3Select Notes
 * There is no `NOT IN` so you have to join your clauses with `something != 'this' AND something != 'that'`
 * Escape single ticks in S3Select with an additional single tick `Daniel's Example` would be escaped like `Daniel''s Example` Don't get confused when you are escaping your base code vs. what the final string needs to look like in the expression.
+* The current database is from: https://www.reddit.com/r/UnearthedArcana/comments/8zvr6s/the_great_dd5e_monster_spreadsheet/
+* a good example: https://donjon.bin.sh/5e/random/#type=encounter;encounter-n_pc=5;encounter-level=3;encounter-difficulty=any;encounter-environment=underdark
+* another example: https://tools.goblinist.com/5enc
+* general resources: https://www.5esrd.com/tools-resources/character-sheets/
+* monsters by type: https://media.wizards.com/2015/downloads/dnd/DnD_MonstersByType_1.0.pdf
+* Full Creature Database: https://www.5esrd.com/database/creature
 * A good resource for Regular Expression (regex) testing - [Regex101](https://regex101.com/)
 * The responses for lambda in proxy mode expect a wrapper for the data that makes it look more like a traditional http response. I wrapped the data returns with the following:
 ```javascript

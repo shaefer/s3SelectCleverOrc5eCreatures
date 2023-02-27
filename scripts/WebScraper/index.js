@@ -160,6 +160,8 @@ const scrapeCreature = async (uri) => {
 
 
 const scrapeCreatureNames = async () => {
+    //nerzugals-extended-bestiary
+    //tome-of-horrors
     const html = await axios.get(`https://dr-eigenvalue.github.io/bestiary/tag/tome-of-beasts`);
     const $ = await cheerio.load(html.data); //cheerio tutorials: https://cheerio.js.org/
 

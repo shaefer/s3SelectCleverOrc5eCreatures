@@ -5,7 +5,7 @@ const fs = require('fs');
 const parseSize = (sizeTypeAndAlignment) => {
     //expects format: Tiny fey, neutral 
     //new RegExp(/^\d+$/).test(i)
-    const matchResults = new RegExp(/(\w+) (\w+), (\w+)/).exec(sizeTypeAndAlignment);
+    const matchResults = new RegExp(/^(\w+) ([\w\s\(\)]+), ([\w\s]+)$/).exec(sizeTypeAndAlignment);
     const matchResultsFull = matchResults[0];
     const size = matchResults[1];
     const type = matchResults[2];
@@ -145,7 +145,7 @@ const scrapeCreature = async (uri) => {
     });
     creature.reactions = reactionList;
 
-    console.log(creature);
+    //console.log(creature);
     return creature;
  };
 
@@ -176,8 +176,13 @@ const scrapeCreatureNames = async () => {
     })
 
     for (let i = 0;i<links.length; i++) {
-        const creature = await scrapeCreature(links[i]);
-        newFileStream.write(JSON.stringify(creature) + "\n");
+        try {
+            const creature = await scrapeCreature(links[i]);
+            newFileStream.write(JSON.stringify(creature) + "\n");
+        } catch (ex) {
+            //TODO: We shouldn't just skip broken ones, but we would need to make some of the matching in regex more resilient and then just update things that are broken...maybe parse everything and just fail that field setting and log an error.
+            console.log("FAILED: " + links[i])
+        }
     }
 }
 

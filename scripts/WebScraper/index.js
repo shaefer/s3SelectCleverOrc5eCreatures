@@ -106,7 +106,13 @@ const scrapeCreature = async (uri) => {
     const abilityList = [];
     abilityNames.each((i, elm) => {
         const name = $(elm).find("strong > em").text();
-        const fullText = $(elm).text();
+        const spellItemsSelected = $(elm).next().find("li > p");
+        const spellItems = [];
+        spellItemsSelected.each((i, elm) => {
+            spellItems.push(" " + $(elm).text());
+        });
+        const fullText = $(elm).text() + spellItems.join();
+        
         abilityList.push({name, fullText});
     })
     creature.abilities = abilityList;
@@ -115,7 +121,12 @@ const scrapeCreature = async (uri) => {
     const actionList = [];
     actions.each((i, elm) => {
         const name = $(elm).find("strong > em").text();
-        const fullText = $(elm).text();
+        const spellItemsSelected = $(elm).next().find("li > p");
+        const spellItems = [];
+        spellItemsSelected.each((i, elm) => {
+            spellItems.push(" " + $(elm).text());
+        });
+        const fullText = $(elm).text() + spellItems.join();
         actionList.push({name, fullText});
     });
     creature.actions = actionList;
@@ -124,7 +135,12 @@ const scrapeCreature = async (uri) => {
     const reactionList = [];
     reactions.each((i, elm) => {
         const name = $(elm).find("strong > em").text();
-        const fullText = $(elm).text();
+        const spellItemsSelected = $(elm).next().find("li > p");
+        const spellItems = [];
+        spellItemsSelected.each((i, elm) => {
+            spellItems.push(" " + $(elm).text());
+        });
+        const fullText = $(elm).text() + spellItems.join();
         reactionList.push({name, fullText});
     });
     creature.reactions = reactionList;
@@ -167,3 +183,4 @@ const scrapeCreatureNames = async () => {
 
 
 scrapeCreatureNames();
+//scrapeCreature('/bestiary/creature/cikavak');
